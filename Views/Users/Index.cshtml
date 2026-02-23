@@ -1,0 +1,37 @@
+@model IEnumerable<HelpdeskSystem.Models.User>
+
+@*
+    Simple user listing view.
+    - Displays FullName, Email, IsActive and CreatedDate.
+    - Provides a Create button to navigate to the user creation form.
+*@
+
+<div class="container mt-4">
+    <h2>Users</h2>
+
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create New User</a>
+    </p>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Is Active</th>
+                <th>Created Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.FullName</td>
+                    <td>@u.Email</td>
+                    <td>@(u.IsActive ? "Yes" : "No")</td>
+                    <td>@u.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

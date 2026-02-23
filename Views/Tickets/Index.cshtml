@@ -1,0 +1,77 @@
+@model HelpdeskSystem.Models.TicketListViewModel
+
+@*
+    Ticket list with search, status and category filters and simple pagination.
+*@
+
+<div class="container mt-4">
+    <h2>Tickets</h2>
+
+    <form method="get" class="row g-3 mb-3">
+        <div class="col-md-3">
+            <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="Search title or description" />
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="Open" selected="@(Model.Status == "Open" ? "selected" : null)">Open</option>
+                <option value="InProgress" selected="@(Model.Status == "InProgress" ? "selected" : null)">In Progress</option>
+                <option value="Closed" selected="@(Model.Status == "Closed" ? "selected" : null)">Closed</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="categoryId" class="form-select">
+                <option value="">All Categories</option>
+                @foreach (var c in Model.Categories)
+                {
+                    <option value="@c.Id" selected="@(Model.CategoryId == c.Id ? "selected" : null)">@c.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a asp-action="Index" class="btn btn-secondary ms-2">Reset</a>
+            <a asp-action="Create" class="btn btn-success ms-2">Create Ticket</a>
+        </div>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Category</th>
+                <th>Created Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in Model.Tickets)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@t.Id">@t.Title</a>
+                    </td>
+                    <td>@t.Status</td>
+                    <td>@t.CategoryName</td>
+                    <td>@t.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            Page @Model.Page of @Model.TotalPages
+        </div>
+        <div>
+            @if (Model.Page > 1)
+            {
+                <a class="btn btn-outline-primary me-2" asp-action="Index" asp-route-page="@(Model.Page - 1)" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-categoryId="@Model.CategoryId">Previous</a>
+            }
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a class="btn btn-outline-primary" asp-action="Index" asp-route-page="@(Model.Page + 1)" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-categoryId="@Model.CategoryId">Next</a>
+            }
+        </div>
+    </div>
+</div>

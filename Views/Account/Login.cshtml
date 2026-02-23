@@ -1,0 +1,51 @@
+@model HelpdeskSystem.Models.LoginViewModel
+
+@*
+    Simple Login view for AccountController.Login.
+    - Uses the LoginViewModel as the form model.
+    - Posts to Account/Login (POST) and includes an anti-forgery token.
+    - Shows validation summary and field-level validation messages.
+    - No extra styling; keeps markup simple and beginner-friendly.
+*@
+
+<div class="container mt-4">
+    <h2>Login</h2>
+
+    @* Display model-level validation errors (e.g. invalid credentials) *@
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    @* The form posts to the Login action on the Account controller. Method=post is required. *@
+    <form asp-action="Login" asp-controller="Account" method="post">
+        @Html.AntiForgeryToken() @* Protects against CSRF attacks. *@
+
+        <div class="mb-3">
+            @* Label for the Email field generated from the model's property name. *@
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" type="email" />
+            @* Field-level validation message for Email. *@
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            @* Label for the Password field. *@
+            <label asp-for="Password" class="form-label"></label>
+            @* Password input bound to Model.Password. *@
+            <input asp-for="Password" class="form-control" type="password" />
+            @* Field-level validation message for Password. *@
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+
+@*
+    Client-side unobtrusive validation requires the following scripts.
+    The layout renders the Scripts section, so include them here if you want client validation.
+    Server-side validation still works without these scripts.
+*@
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+}
