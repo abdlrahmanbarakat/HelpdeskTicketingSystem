@@ -3,9 +3,6 @@ using System.Collections.Generic;
 
 namespace HelpdeskSystem.Models
 {
-    /// <summary>
-    /// View model used for ticket details page including comments and add-comment form.
-    /// </summary>
     public class TicketDetailsViewModel
     {
         public int TicketId { get; set; }
@@ -15,15 +12,12 @@ namespace HelpdeskSystem.Models
         public DateTime CreatedDate { get; set; }
         public string CategoryName { get; set; } = string.Empty;
 
-        // Comments currently associated with the ticket.
+        // Comments currently associated with the ticket
         public List<CommentItem> Comments { get; set; } = new List<CommentItem>();
 
-        // Bound to the add-comment form.
+        // Bound to the add-comment form
         public string NewCommentText { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Lightweight comment data for display.
-        /// </summary>
         public class CommentItem
         {
             public int Id { get; set; }

@@ -4,9 +4,6 @@ using HelpdeskSystem.Models;
 
 namespace HelpdeskSystem.Controllers
 {
-    /// <summary>
-    /// Controller for creating and listing tickets. Inherits BaseController to require login.
-    /// </summary>
     public class TicketsController : BaseController
     {
         private readonly TicketDb _ticketDb;
@@ -16,14 +13,10 @@ namespace HelpdeskSystem.Controllers
             _ticketDb = ticketDb;
         }
 
-        /// <summary>
-        /// GET: /Tickets
-        /// Shows paged list of tickets with optional filters.
-        /// </summary>
+        // list tickets with filters and paging
         public IActionResult Index(string? search, string? status, int? categoryId, int page = 1)
         {
             const int pageSize = 10;
-
             var totalCount = _ticketDb.GetTicketsCount(search, status, categoryId);
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             if (page < 1) page = 1;
@@ -45,32 +38,25 @@ namespace HelpdeskSystem.Controllers
             return View(vm);
         }
 
-        /// <summary>
-        /// GET: /Tickets/Create
-        /// Shows a create form with active categories for dropdown.
-        /// </summary>
+        // show create form
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Categories = _ticketDb.GetActiveCategoriesForDropdown();
+            PopulateCategories();
             return View(new Ticket());
         }
 
-        /// <summary>
-        /// POST: /Tickets/Create
-        /// Validates input, sets CreatedBy from session, sets defaults and inserts.
-        /// </summary>
+        // handle create post
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Ticket model)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Categories = _ticketDb.GetActiveCategoriesForDropdown();
+                PopulateCategories();
                 return View(model);
             }
 
-            // Get current user id from session (BaseController ensures user is logged in)
             var userId = HttpContext.Session.GetInt32("UserId");
             model.CreatedBy = userId ?? 0;
             model.Status = "Open";
@@ -78,59 +64,40 @@ namespace HelpdeskSystem.Controllers
             model.IsDeleted = false;
 
             _ticketDb.InsertTicket(model);
-
             return RedirectToAction("Index");
         }
 
-        /// <summary>
-        /// GET: /Tickets/Details/{id}
-        /// Shows ticket details and comments.
-        /// </summary>
+        // ticket details with comments
         [HttpGet]
         public IActionResult Details(int id)
         {
             var ticket = _ticketDb.GetTicketDetails(id);
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-
+            if (ticket == null) return NotFound();
             ticket.Comments = _ticketDb.GetCommentsForTicket(id);
             return View(ticket);
         }
 
-        /// <summary>
-        /// POST: /Tickets/AddComment/{id}
-        /// Adds a new comment to the ticket unless the ticket is closed.
-        /// </summary>
+        // add a comment to a ticket
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddComment(int id, TicketDetailsViewModel model)
         {
-            // Server-side validation: new comment must not be empty.
             if (string.IsNullOrWhiteSpace(model.NewCommentText))
             {
                 ModelState.AddModelError(nameof(model.NewCommentText), "Comment cannot be empty.");
             }
 
-            // Retrieve ticket details to re-render view if needed.
             var ticket = _ticketDb.GetTicketDetails(id);
-            if (ticket == null)
-            {
-                return NotFound();
-            }
+            if (ticket == null) return NotFound();
 
             if (!ModelState.IsValid)
             {
                 ticket.Comments = _ticketDb.GetCommentsForTicket(id);
-                // Preserve the attempted new comment text so user doesn't lose it.
                 ticket.NewCommentText = model.NewCommentText;
                 return View("Details", ticket);
             }
 
-            // Get current user id from session (BaseController ensures login)
             var userId = HttpContext.Session.GetInt32("UserId") ?? 0;
-
             var added = _ticketDb.AddComment(id, model.NewCommentText, userId);
             if (!added)
             {
@@ -143,16 +110,19 @@ namespace HelpdeskSystem.Controllers
             return RedirectToAction("Details", new { id });
         }
 
-        /// <summary>
-        /// POST: /Tickets/Delete
-        /// Soft-deletes a ticket by setting IsDeleted = 1. Redirects back to index.
-        /// </summary>
+        // soft delete ticket
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
             _ticketDb.SoftDeleteTicket(id);
             return RedirectToAction("Index");
+        }
+
+        // populate categories for create form
+        private void PopulateCategories()
+        {
+            ViewBag.Categories = _ticketDb.GetActiveCategoriesForDropdown();
         }
     }
 }

@@ -5,9 +5,7 @@ using HelpdeskSystem.Models;
 
 namespace HelpdeskSystem.Data
 {
-    /// <summary>
-    /// Simple ADO.NET data access for Tickets table.
-    /// </summary>
+    // Data access for Tickets and related operations
     public class TicketDb
     {
         private readonly Db _db;
@@ -17,17 +15,11 @@ namespace HelpdeskSystem.Data
             _db = db;
         }
 
-        /// <summary>
-        /// Inserts a new ticket into the Tickets table.
-        /// Auto fields (CreatedBy, Status, CreatedDate, IsDeleted) should be set on the model before calling.
-        /// </summary>
         public void InsertTicket(Ticket model)
         {
             using var connection = _db.CreateConnection();
-            const string sql = @"
-INSERT INTO Tickets (Title, Description, CategoryId, CreatedBy, Status, CreatedDate, IsDeleted)
-VALUES (@Title, @Description, @CategoryId, @CreatedBy, @Status, @CreatedDate, @IsDeleted)
-";
+            const string sql = @"INSERT INTO Tickets (Title, Description, CategoryId, CreatedBy, Status, CreatedDate, IsDeleted)
+VALUES (@Title, @Description, @CategoryId, @CreatedBy, @Status, @CreatedDate, @IsDeleted)";
             using var command = new SqlCommand(sql, connection) { CommandType = CommandType.Text };
 
             command.Parameters.Add(new SqlParameter("@Title", SqlDbType.NVarChar, 200) { Value = model.Title ?? string.Empty });
@@ -42,9 +34,6 @@ VALUES (@Title, @Description, @CategoryId, @CreatedBy, @Status, @CreatedDate, @I
             command.ExecuteNonQuery();
         }
 
-        /// <summary>
-        /// Returns active categories for dropdown (Id and Name only).
-        /// </summary>
         public List<Category> GetActiveCategoriesForDropdown()
         {
             var list = new List<Category>();
@@ -66,9 +55,6 @@ VALUES (@Title, @Description, @CategoryId, @CreatedBy, @Status, @CreatedDate, @I
             return list;
         }
 
-        /// <summary>
-        /// Returns categories for filter dropdown (Id and Name).
-        /// </summary>
         public List<Category> GetAllCategoriesForFilter()
         {
             var list = new List<Category>();
@@ -90,15 +76,9 @@ VALUES (@Title, @Description, @CategoryId, @CreatedBy, @Status, @CreatedDate, @I
             return list;
         }
 
-        /// <summary>
-        /// Returns a page of tickets with optional search and filters. Excludes soft-deleted tickets (IsDeleted = 0).
-        /// Joins Categories to provide Category name.
-        /// Uses parameterized query with OFFSET/FETCH for pagination.
-        /// </summary>
         public List<TicketListItem> GetTicketsPaged(string? search, string? status, int? categoryId, int page, int pageSize)
         {
             var list = new List<TicketListItem>();
-
             using var connection = _db.CreateConnection();
 
             var sql = new StringBuilder();
@@ -159,9 +139,6 @@ VALUES (@Title, @Description, @CategoryId, @CreatedBy, @Status, @CreatedDate, @I
             return list;
         }
 
-        /// <summary>
-        /// Returns total count of tickets matching optional filters (excluding soft-deleted).
-        /// </summary>
         public int GetTicketsCount(string? search, string? status, int? categoryId)
         {
             using var connection = _db.CreateConnection();
@@ -202,14 +179,10 @@ VALUES (@Title, @Description, @CategoryId, @CreatedBy, @Status, @CreatedDate, @I
             return result;
         }
 
-        /// <summary>
-        /// Returns ticket details with category name, or null if not found or soft-deleted.
-        /// </summary>
         public TicketDetailsViewModel? GetTicketDetails(int ticketId)
         {
             using var connection = _db.CreateConnection();
-            const string sql = @"
-SELECT t.Id, t.Title, t.Description, t.Status, t.CreatedDate, c.Name
+            const string sql = @"SELECT t.Id, t.Title, t.Description, t.Status, t.CreatedDate, c.Name
 FROM Tickets t
 LEFT JOIN Categories c ON t.CategoryId = c.Id
 WHERE t.Id = @Id AND t.IsDeleted = 0";
@@ -235,16 +208,11 @@ WHERE t.Id = @Id AND t.IsDeleted = 0";
             return null;
         }
 
-        /// <summary>
-        /// Returns comments for a ticket ordered by CreatedDate ascending.
-        /// Joins Users to get the creator's full name.
-        /// </summary>
         public List<TicketDetailsViewModel.CommentItem> GetCommentsForTicket(int ticketId)
         {
             var list = new List<TicketDetailsViewModel.CommentItem>();
             using var connection = _db.CreateConnection();
-            const string sql = @"
-SELECT tc.Id, tc.CommentText, tc.CreatedDate, u.FullName
+            const string sql = @"SELECT tc.Id, tc.CommentText, tc.CreatedDate, u.FullName
 FROM TicketComments tc
 LEFT JOIN Users u ON tc.CreatedByU = u.Id
 WHERE tc.TicketId = @TicketId
@@ -268,15 +236,10 @@ ORDER BY tc.CreatedDate ASC";
             return list;
         }
 
-        /// <summary>
-        /// Adds a comment to a ticket if the ticket is not closed and not soft-deleted.
-        /// Returns true on success, false if ticket is closed or not found.
-        /// </summary>
         public bool AddComment(int ticketId, string commentText, int createdByUserId)
         {
             using var connection = _db.CreateConnection();
 
-            // First check ticket status and existence
             const string checkSql = "SELECT Status FROM Tickets WHERE Id = @Id AND IsDeleted = 0";
             using var checkCmd = new SqlCommand(checkSql, connection) { CommandType = CommandType.Text };
             checkCmd.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = ticketId });
@@ -285,20 +248,16 @@ ORDER BY tc.CreatedDate ASC";
             var statusObj = checkCmd.ExecuteScalar();
             if (statusObj == null || statusObj == DBNull.Value)
             {
-                // Ticket not found or deleted
                 return false;
             }
 
             var status = statusObj.ToString() ?? string.Empty;
             if (string.Equals(status, "Closed", StringComparison.OrdinalIgnoreCase))
             {
-                // Do not allow comments on closed tickets
                 return false;
             }
 
-            // Insert the comment
-            const string insertSql = @"
-INSERT INTO TicketComments (TicketId, CommentText, CreatedByU, CreatedDate)
+            const string insertSql = @"INSERT INTO TicketComments (TicketId, CommentText, CreatedByU, CreatedDate)
 VALUES (@TicketId, @CommentText, @CreatedByU, @CreatedDate)";
             using var insertCmd = new SqlCommand(insertSql, connection) { CommandType = CommandType.Text };
             insertCmd.Parameters.Add(new SqlParameter("@TicketId", SqlDbType.Int) { Value = ticketId });
@@ -310,10 +269,6 @@ VALUES (@TicketId, @CommentText, @CreatedByU, @CreatedDate)";
             return true;
         }
 
-        /// <summary>
-        /// Soft-deletes a ticket by setting IsDeleted = 1. Does not remove the row.
-        /// Returns true if a row was updated (ticket existed), otherwise false.
-        /// </summary>
         public bool SoftDeleteTicket(int ticketId)
         {
             using var connection = _db.CreateConnection();

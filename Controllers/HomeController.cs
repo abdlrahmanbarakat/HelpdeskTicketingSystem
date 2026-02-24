@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HelpdeskSystem.Controllers
 {
-    // Inherit from BaseController to enforce session-based login checks before actions run.
     public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;

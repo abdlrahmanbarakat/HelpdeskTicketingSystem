@@ -1,49 +1,45 @@
 @model HelpdeskSystem.Models.LoginViewModel
 
-@*
-    Simple Login view for AccountController.Login.
-    - Uses the LoginViewModel as the form model.
-    - Posts to Account/Login (POST) and includes an anti-forgery token.
-    - Shows validation summary and field-level validation messages.
-    - No extra styling; keeps markup simple and beginner-friendly.
-*@
+@{
+    ViewData["Title"] = "Login";
+}
 
-<div class="container mt-4">
-    <h2>Login</h2>
+<div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Login</h4>
 
-    @* Display model-level validation errors (e.g. invalid credentials) *@
-    <div asp-validation-summary="All" class="text-danger"></div>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+                }
 
-    @* The form posts to the Login action on the Account controller. Method=post is required. *@
-    <form asp-action="Login" asp-controller="Account" method="post">
-        @Html.AntiForgeryToken() @* Protects against CSRF attacks. *@
+                <form asp-action="Login" asp-controller="Account" method="post">
+                    @Html.AntiForgeryToken()
 
-        <div class="mb-3">
-            @* Label for the Email field generated from the model's property name. *@
-            <label asp-for="Email" class="form-label"></label>
-            <input asp-for="Email" class="form-control" type="email" />
-            @* Field-level validation message for Email. *@
-            <span asp-validation-for="Email" class="text-danger"></span>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" type="password" placeholder="Your password" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <div class="mb-3">
-            @* Label for the Password field. *@
-            <label asp-for="Password" class="form-label"></label>
-            @* Password input bound to Model.Password. *@
-            <input asp-for="Password" class="form-control" type="password" />
-            @* Field-level validation message for Password. *@
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
+    </div>
 </div>
 
-@*
-    Client-side unobtrusive validation requires the following scripts.
-    The layout renders the Scripts section, so include them here if you want client validation.
-    Server-side validation still works without these scripts.
-*@
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>

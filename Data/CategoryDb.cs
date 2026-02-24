@@ -4,9 +4,6 @@ using HelpdeskSystem.Models;
 
 namespace HelpdeskSystem.Data
 {
-    /// <summary>
-    /// Simple ADO.NET data access for Categories table.
-    /// </summary>
     public class CategoryDb
     {
         private readonly Db _db;
@@ -16,10 +13,6 @@ namespace HelpdeskSystem.Data
             _db = db;
         }
 
-        /// <summary>
-        /// Returns all categories ordered by name.
-        /// SELECT Id, Name, IsActive, CreatedDate FROM Categories ORDER BY Name
-        /// </summary>
         public List<Category> GetAllCategories()
         {
             var list = new List<Category>();
@@ -43,11 +36,6 @@ namespace HelpdeskSystem.Data
             return list;
         }
 
-        /// <summary>
-        /// Checks if a category name already exists in the database.
-        /// Returns true if the name exists, false otherwise.
-        /// SELECT COUNT(1) FROM Categories WHERE Name = @Name
-        /// </summary>
         public bool NameExists(string name)
         {
             using var connection = _db.CreateConnection();
@@ -61,17 +49,11 @@ namespace HelpdeskSystem.Data
             return result > 0;
         }
 
-        /// <summary>
-        /// Inserts a new category into the Categories table.
-        /// INSERT(Name, IsActive, CreatedDate)
-        /// </summary>
         public void InsertCategory(Category model)
         {
             using var connection = _db.CreateConnection();
-            const string sql = @"
-INSERT INTO Categories (Name, IsActive, CreatedDate)
-VALUES (@Name, @IsActive, @CreatedDate)
-";
+            const string sql = @"INSERT INTO Categories (Name, IsActive, CreatedDate)
+VALUES (@Name, @IsActive, @CreatedDate)";
             using var command = new SqlCommand(sql, connection) { CommandType = CommandType.Text };
 
             command.Parameters.Add(new SqlParameter("@Name", SqlDbType.NVarChar, 200) { Value = model.Name ?? string.Empty });
@@ -80,6 +62,20 @@ VALUES (@Name, @IsActive, @CreatedDate)
 
             connection.Open();
             command.ExecuteNonQuery();
+        }
+
+        public bool ToggleIsActive(int id)
+        {
+            using var connection = _db.CreateConnection();
+            const string sql = @"UPDATE Categories
+SET IsActive = CASE WHEN IsActive = 1 THEN 0 ELSE 1 END
+WHERE Id = @Id";
+            using var command = new SqlCommand(sql, connection) { CommandType = CommandType.Text };
+            command.Parameters.AddWithValue("@Id", id);
+
+            connection.Open();
+            var rows = command.ExecuteNonQuery();
+            return rows > 0;
         }
     }
 }

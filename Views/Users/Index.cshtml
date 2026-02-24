@@ -1,37 +1,47 @@
 @model IEnumerable<HelpdeskSystem.Models.User>
 
-@*
-    Simple user listing view.
-    - Displays FullName, Email, IsActive and CreatedDate.
-    - Provides a Create button to navigate to the user creation form.
-*@
+<div class="container-lg">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+                <h3 class="mb-0">Users</h3>
+                <div class="ms-auto">
+                    <a asp-action="Create" class="btn btn-primary">Create User</a>
+                </div>
+            </div>
 
-<div class="container mt-4">
-    <h2>Users</h2>
-
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Create New User</a>
-    </p>
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Is Active</th>
-                <th>Created Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var u in Model)
-            {
-                <tr>
-                    <td>@u.FullName</td>
-                    <td>@u.Email</td>
-                    <td>@(u.IsActive ? "Yes" : "No")</td>
-                    <td>@u.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Is Active</th>
+                            <th>Created Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var u in Model)
+                        {
+                            <tr>
+                                <td>@u.FullName</td>
+                                <td>@u.Email</td>
+                                <td>
+                                    @if (u.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+                                <td>@u.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

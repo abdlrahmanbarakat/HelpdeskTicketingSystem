@@ -1,22 +1,31 @@
-html {
-  font-size: 14px;
-}
+html { font-size: 14px; }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
+@media (min-width: 768px) { html { font-size: 16px; } }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
+/* Focus ring tweak */
+.btn:focus, .form-control:focus, .form-check-input:focus { box-shadow: 0 0 0 0.15rem rgba(37,140,251,0.25); }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
+/* Page container max width helpers and spacing */
+.container-lg { max-width: 1100px; }
 
+/* Card small helper spacing */
+.card-body .form-label { font-weight: 600; }
+
+/* Slightly smaller table font on mobile */
+@media (max-width: 575px) { .table { font-size: 0.95rem; } }
+
+/* Make footer stick to bottom when content is short without overlapping content */
+html, body {
+  height: 100%;
+}
 body {
-  margin-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+main {
+  flex: 1 0 auto; /* allow main content to grow and push footer down */
+}
+footer {
+  flex-shrink: 0;
 }

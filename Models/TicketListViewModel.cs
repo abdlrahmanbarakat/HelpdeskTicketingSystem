@@ -2,9 +2,6 @@ using System.Collections.Generic;
 
 namespace HelpdeskSystem.Models
 {
-    /// <summary>
-    /// View model for the Tickets index page which contains listing and filter values.
-    /// </summary>
     public class TicketListViewModel
     {
         public List<TicketListItem> Tickets { get; set; } = new List<TicketListItem>();
