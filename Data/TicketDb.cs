@@ -34,6 +34,7 @@ VALUES (@Title, @Description, @CategoryId, @CreatedBy, @Status, @CreatedDate, @I
             command.ExecuteNonQuery();
         }
 
+        // Get active categories for dropdown list
         public List<Category> GetActiveCategoriesForDropdown()
         {
             var list = new List<Category>();
@@ -55,6 +56,7 @@ VALUES (@Title, @Description, @CategoryId, @CreatedBy, @Status, @CreatedDate, @I
             return list;
         }
 
+        // Get all categories for filtering
         public List<Category> GetAllCategoriesForFilter()
         {
             var list = new List<Category>();
@@ -76,6 +78,7 @@ VALUES (@Title, @Description, @CategoryId, @CreatedBy, @Status, @CreatedDate, @I
             return list;
         }
 
+        // Get paginated list of tickets with optional search and filter
         public List<TicketListItem> GetTicketsPaged(string? search, string? status, int? categoryId, int page, int pageSize)
         {
             var list = new List<TicketListItem>();
@@ -252,6 +255,7 @@ ORDER BY tc.CreatedDate ASC";
             }
 
             var status = statusObj.ToString() ?? string.Empty;
+            // prevent comments on closed tickets
             if (string.Equals(status, "Closed", StringComparison.OrdinalIgnoreCase))
             {
                 return false;

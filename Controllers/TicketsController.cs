@@ -13,7 +13,6 @@ namespace HelpdeskSystem.Controllers
             _ticketDb = ticketDb;
         }
 
-        // list tickets with filters and paging
         public IActionResult Index(string? search, string? status, int? categoryId, int page = 1)
         {
             const int pageSize = 10;
@@ -38,7 +37,6 @@ namespace HelpdeskSystem.Controllers
             return View(vm);
         }
 
-        // show create form
         [HttpGet]
         public IActionResult Create()
         {
@@ -46,11 +44,11 @@ namespace HelpdeskSystem.Controllers
             return View(new Ticket());
         }
 
-        // handle create post
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Ticket model)
         {
+            // verify model state to avoid saving invalid data
             if (!ModelState.IsValid)
             {
                 PopulateCategories();
@@ -67,7 +65,6 @@ namespace HelpdeskSystem.Controllers
             return RedirectToAction("Index");
         }
 
-        // ticket details with comments
         [HttpGet]
         public IActionResult Details(int id)
         {
@@ -77,7 +74,6 @@ namespace HelpdeskSystem.Controllers
             return View(ticket);
         }
 
-        // add a comment to a ticket
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddComment(int id, TicketDetailsViewModel model)
@@ -90,6 +86,7 @@ namespace HelpdeskSystem.Controllers
             var ticket = _ticketDb.GetTicketDetails(id);
             if (ticket == null) return NotFound();
 
+            // check model validity before attempting to add a comment
             if (!ModelState.IsValid)
             {
                 ticket.Comments = _ticketDb.GetCommentsForTicket(id);
@@ -110,16 +107,15 @@ namespace HelpdeskSystem.Controllers
             return RedirectToAction("Details", new { id });
         }
 
-        // soft delete ticket
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
+            // mark ticket as deleted to retain history and avoid cascade issues
             _ticketDb.SoftDeleteTicket(id);
             return RedirectToAction("Index");
         }
 
-        // populate categories for create form
         private void PopulateCategories()
         {
             ViewBag.Categories = _ticketDb.GetActiveCategoriesForDropdown();

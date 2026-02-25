@@ -16,7 +16,7 @@ namespace HelpdeskSystem.Data
             _db = db;
         }
 
-        // Retrieve user by email
+        // get user by email used for authentication and status checks
         public (int Id, string FullName, string PasswordHash, bool IsActive)? GetByEmail(string email)
         {
             using var connection = _db.CreateConnection();
@@ -60,6 +60,7 @@ namespace HelpdeskSystem.Data
             return list;
         }
 
+        // check for existing email to avoid duplicates
         public bool EmailExists(string email)
         {
             using var connection = _db.CreateConnection();
@@ -89,7 +90,7 @@ VALUES (@FullName, @Email, @PasswordHash, @IsActive, @CreatedDate)";
             command.ExecuteNonQuery();
         }
 
-        // Compute SHA256 HEX
+        // compute SHA256 uppercase hex for password storage
         public static string ComputeSha256Hash(string input)
         {
             input ??= string.Empty;

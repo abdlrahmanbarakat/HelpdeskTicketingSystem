@@ -6,7 +6,7 @@ using System.Text;
 
 namespace HelpdeskSystem.Controllers
 {
-    // Simple account controller using session-based authentication
+    // Simple account controller using session based authentication
     public class AccountController : Controller
     {
         private readonly UserDb _userDb;
@@ -38,6 +38,7 @@ namespace HelpdeskSystem.Controllers
                 return View(model);
             }
 
+            // block inactive accounts to prevent login
             if (!user.Value.IsActive)
             {
                 ModelState.AddModelError(string.Empty, "Account is inactive. Contact admin.");
@@ -65,7 +66,7 @@ namespace HelpdeskSystem.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        // Compute SHA256 and return uppercase HEX string
+        // compute SHA256 and return uppercase HEX string
         private static string ComputeSha256Hash(string input)
         {
             input ??= string.Empty;
