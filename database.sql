@@ -1,5 +1,4 @@
--- Optional create database statement
--- adjust database name as needed
+-- Helpdesk Database
 IF DB_ID('HelpdeskDb') IS NULL
 BEGIN
     CREATE DATABASE HelpdeskDb;
@@ -72,9 +71,6 @@ ALTER TABLE dbo.TicketComments
 ADD CONSTRAINT FK_TicketComments_Users FOREIGN KEY (CreatedByU) REFERENCES dbo.Users(Id);
 
 -- Seed data
--- Users: passwords are SHA256 hex of plain passwords
--- Admin default password: Admin123!
--- Inactive user default password: User123!
 
 INSERT INTO dbo.Users (FullName, Email, PasswordHash, IsActive)
 VALUES
