@@ -17,9 +17,6 @@ namespace HelpdeskSystem.Models
         public List<Category> Categories { get; set; } = new List<Category>();
     }
 
-    /// <summary>
-    /// Lightweight ticket data for list display.
-    /// </summary>
     public class TicketListItem
     {
         public int Id { get; set; }

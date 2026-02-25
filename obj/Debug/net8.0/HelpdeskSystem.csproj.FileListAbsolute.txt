@@ -33,7 +33,6 @@ C:\Users\MY LAPTOP\OneDrive\Documents\HelpdeskSystem\HelpdeskSystem\obj\Debug\ne
 C:\Users\MY LAPTOP\OneDrive\Documents\HelpdeskSystem\HelpdeskSystem\obj\Debug\net8.0\ref\HelpdeskSystem.dll
 C:\Users\MY LAPTOP\OneDrive\Documents\HelpdeskSystem\HelpdeskSystem\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\MY LAPTOP\OneDrive\Documents\HelpdeskSystem\HelpdeskSystem\bin\Debug\net8.0\Azure.Identity.dll
-C:\Users\MY LAPTOP\OneDrive\Documents\HelpdeskSystem\HelpdeskSystem\bin\Debug\net8.0\BCrypt.Net-Next.dll
 C:\Users\MY LAPTOP\OneDrive\Documents\HelpdeskSystem\HelpdeskSystem\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\MY LAPTOP\OneDrive\Documents\HelpdeskSystem\HelpdeskSystem\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
 C:\Users\MY LAPTOP\OneDrive\Documents\HelpdeskSystem\HelpdeskSystem\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
