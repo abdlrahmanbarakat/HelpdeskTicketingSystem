@@ -78,8 +78,8 @@ ADD CONSTRAINT FK_TicketComments_Users FOREIGN KEY (CreatedByU) REFERENCES dbo.U
 
 INSERT INTO dbo.Users (FullName, Email, PasswordHash, IsActive)
 VALUES
-('Admin User', 'admin@example.com', '3EB3FE66B31E3B4D10FA70B5CAD49C7112294AF6AE4E476A1C405155D45AA121', 1),
-('Inactive User', 'inactive@example.com', 'BC5848F227CC161EB5F68DFE98CB13110A9C843CE69E953A88107D865583D397', 0);
+('Admin User', 'admin@helpdesk.com', 'Admin123!', 1),
+('Inactive User', 'inactive@helpdesk.com', 'User123!', 0);
 
 -- Categories
 INSERT INTO dbo.Categories (Name, IsActive)
