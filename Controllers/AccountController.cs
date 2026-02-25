@@ -45,7 +45,7 @@ namespace HelpdeskSystem.Controllers
                 return View(model);
             }
 
-            var enteredHash = ComputeSha256Hash(model.Password);
+            var enteredHash = UserDb.ComputeSha256Hash(model.Password);
             if (!string.Equals(enteredHash, user.Value.PasswordHash ?? string.Empty, StringComparison.OrdinalIgnoreCase))
             {
                 ModelState.AddModelError(string.Empty, "Invalid email or password.");
@@ -66,7 +66,7 @@ namespace HelpdeskSystem.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        // compute SHA256 and return uppercase HEX string
+        // kept in UserDb to avoid duplication
         private static string ComputeSha256Hash(string input)
         {
             input ??= string.Empty;
